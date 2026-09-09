@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="auth-container" style="display: flex; justify-content: center; align-items: center; min-height: 85vh; padding: 40px 20px;">
     
     <div class="auth-box" style="width: 100%; max-width: 480px; background-color: #0f1938; padding: 40px; border-radius: 12px; border: 1px solid #1e293b80; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
@@ -23,6 +24,7 @@
                 <label for="role" style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 14px;">Register As</label>
                 <select id="role" name="role" required style="width: 100%; padding: 12px 15px; border-radius: 6px; border: 1px solid #1e293b; background-color: #0b1120; color: #ffffff; font-size: 14px; outline: none; cursor: pointer;">
                     <option value="student">Student</option>
+                    <option value="alumni">Alumni</option>
                     <option value="company">Company</option>
                 </select>
             </div>
@@ -45,6 +47,12 @@
             <div class="input-group" id="student-id-group" style="margin-bottom: 20px;">
                 <label for="student_id" style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 14px;">Student ID</label>
                 <input type="text" id="student_id" name="student_id" required style="width: 100%; padding: 12px 15px; border-radius: 6px; border: 1px solid #1e293b; background-color: #0b1120; color: #ffffff; font-size: 14px; outline: none;">
+            </div>
+
+            <!-- Batch Number -->
+            <div class="input-group" id="passing-year-group" style="margin-bottom: 20px; display: none;">
+                <label for="passing_year" style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 14px;">Batch Number</label>
+                <input type="text" id="passing_year" name="passing_year" placeholder="e.g. 56 or 56th Batch" style="width: 100%; padding: 12px 15px; border-radius: 6px; border: 1px solid #1e293b; background-color: #0b1120; color: #ffffff; font-size: 14px; outline: none;">
             </div>
 
             <div class="input-group" id="department-group" style="margin-bottom: 24px;">
