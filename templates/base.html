@@ -3,36 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUB Internship Portal</title>
+    <title>Varsity Internship Portal</title>
     
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <nav class="navbar">
         <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <!-- Navbar Logo Path -->
+            <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Logo" class="logo">
             <div class="university-name">
                 <h2>Varsity Internship Portal</h2>
                 <p>Department of Computer Science & Engineering</p>
             </div>
         </div>
+        
         <ul class="nav-links">
-            <li><a href="/" class="active">Home</a></li>
-            <li><a href="#">Internships</a></li>
-            <li><a href="#">For Companies</a></li>
-            <li><a href="#">For Students</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+            
+            {% if not session.get('logged_in') %}
+                <!-- লগইন না থাকা অবস্থায় লিংকগুলো সঠিক পাথে রিডাইরেক্ট করবে -->
+                <li><a href="/internships" class="{% if request.path == '/internships' %}active{% endif %}">Internships</a></li>
+                <li><a href="/company" class="{% if request.path == '/company' %}active{% endif %}">For Companies</a></li>
+                <li><a href="/student" class="{% if request.path == '/student' %}active{% endif %}">For Students</a></li>
+                <li><a href="/alumni" class="{% if request.path == '/alumni' %}active{% endif %}">Alumni</a></li>
+                <li><a href="/contact" class="{% if request.path == '/contact' %}active{% endif %}">Contact</a></li>
+            
+            {% elif session.get('user_type') == 'student' %}
+                <!-- স্টুডেন্ট লগইন থাকলে -->
+                <li><a href="/internships" class="{% if request.path == '/internships' %}active{% endif %}">Internships</a></li>
+                <li><a href="/student" class="{% if request.path == '/student' %}active{% endif %}">For Students</a></li>
+                <li><a href="/alumni" class="{% if request.path == '/alumni' %}active{% endif %}">Alumni Profile</a></li>
+                <li><a href="/contact" class="{% if request.path == '/contact' %}active{% endif %}">Contact Alumni</a></li>
+            
+            {% elif session.get('user_type') == 'company' %}
+                <!-- কোম্পানি লগইন থাকলে -->
+                <li><a href="/company" class="{% if request.path == '/company' %}active{% endif %}">For Companies</a></li>
+                <li><a href="/contact" class="{% if request.path == '/contact' %}active{% endif %}">Contact</a></li>
+            {% endif %}
         </ul>
         
         <div class="nav-buttons">
             {% if session.get('logged_in') %}
                 <span class="user-profile-name" style="color: #3b82f6; font-weight: 600; font-size: 13px; text-align: right; margin-right: 10px;">
-                    <i class="fas fa-user" style="margin-right: 5px;"></i> 
-                    {{ session['user_name'] }} 
+                    <i class="fas {% if session.get('user_type') == 'company' %}fa-building{% else %}fa-user{% endif %}" style="margin-right: 5px;"></i> 
+                    {{ session.get('user_name', 'User') }} 
                     <small style="font-size: 10px; color: #94a3b8; display: block;">
-                        ({{ session['user_type'] | capitalize }})
+                        ({{ session.get('user_type', 'Member') | capitalize }})
                     </small>
                 </span>
                 <a href="/logout" class="btn btn-outline-light">Logout</a>
