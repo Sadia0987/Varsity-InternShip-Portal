@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Varsity Internship Portal - For Students</title>
+
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -30,9 +34,17 @@
         <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
             <a href="/" class="hover:text-white transition whitespace-nowrap">Home</a>
             <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
-            <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
-            <a href="/student" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">For Students</a>
-            <a href="#" class="hover:text-white transition whitespace-nowrap">Contact</a>
+
+            {% if not session.get('logged_in') %}
+                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                <a href="/student" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">For Students</a>
+            {% elif session.get('user_type') == 'student' %}
+                <a href="/student" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">For Students</a>
+            {% elif session.get('user_type') == 'company' %}
+                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+            {% endif %}
+
+            <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
             
             <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
 
@@ -49,17 +61,125 @@
         </div>
     </nav>
 
-    <!-- Header / Hero Section -->
-    <header class="relative bg-cover bg-center min-h-[350px] md:h-[400px] flex items-center px-6 sm:px-12 lg:px-24 py-12 md:py-0" style="background-image: linear-gradient(rgba(9, 15, 36, 0.85), rgba(9, 15, 36, 0.95)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200');">
-        <div class="max-w-3xl relative z-10 w-full">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-2 block">Student Workspace</span>
-            <h2 class="text-3xl sm:text-4xl font-black mb-3 leading-tight tracking-tight">Kickstart Your Professional Career</h2>
-            <p class="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-2xl">Explore verified internship opportunities, submit applications directly to companies, and track your recruitment status in real time.</p>
+    <!-- LinkedIn Style Profile Card Section -->
+    <section class="px-6 sm:px-12 lg:px-24 pt-8">
+        <div class="bg-[#0F1938] border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+            
+            <!-- Dynamic Cover Banner -->
+            <div class="h-36 sm:h-44 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 bg-cover bg-center relative" 
+                 style="{% if current_user and current_user.cover_photo %}background-image: url('{{ url_for('static', filename='uploads/' + current_user.cover_photo) }}');{% endif %}">
+            </div>
+            
+            <div class="px-6 pb-6 relative">
+                <div class="flex flex-col md:flex-row md:items-end justify-between -mt-16 mb-4 gap-4">
+                    <!-- Avatar & Basic Details -->
+                    <div class="flex flex-col md:flex-row items-center md:items-end gap-4 text-center md:text-left">
+                        <img src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) if current_user and current_user.profile_pic else 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}" 
+                             alt="Profile Picture" 
+                             class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-[#0F1938] object-cover bg-gray-800 shadow-xl">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                                {{ session.get('user_name', 'Student') }}
+                                <i class="fa-solid fa-circle-check text-blue-500 text-xs" title="Verified Student"></i>
+                            </h2>
+                            <p class="text-xs text-blue-400 font-medium mt-0.5">
+                                {{ current_user.department if current_user and current_user.department else 'Department of Computer Science & Engineering' }}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                <i class="fa-solid fa-graduation-cap mr-1"></i> {{ current_user.semester if current_user and current_user.semester else 'Current Semester: N/A' }} 
+                                {% if current_user and current_user.cgpa %}
+                                    <span class="mx-1.5">•</span> <span class="text-amber-400 font-semibold">CGPA: {{ current_user.cgpa }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Social Links & Edit Profile Button -->
+                    <div class="flex flex-wrap items-center justify-center md:justify-end gap-3">
+                        {% if current_user and current_user.github_url %}
+                            <a href="{{ current_user.github_url }}" target="_blank" class="w-8 h-8 rounded-full bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition" title="GitHub">
+                                <i class="fa-brands fa-github text-sm"></i>
+                            </a>
+                        {% endif %}
+                        {% if current_user and current_user.linkedin_url %}
+                            <a href="{{ current_user.linkedin_url }}" target="_blank" class="w-8 h-8 rounded-full bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white flex items-center justify-center transition" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin-in text-sm"></i>
+                            </a>
+                        {% endif %}
+                        {% if current_user and current_user.portfolio_url %}
+                            <a href="{{ current_user.portfolio_url }}" target="_blank" class="w-8 h-8 rounded-full bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white flex items-center justify-center transition" title="Portfolio">
+                                <i class="fa-solid fa-globe text-sm"></i>
+                            </a>
+                        {% endif %}
+
+                        <button onclick="document.getElementById('editProfileModal').classList.remove('hidden')" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bio, Skills & Resume Details Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-800/80 mt-4">
+                    
+                    <!-- Bio & About Me -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-user text-blue-500"></i> About Me
+                            </h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                {{ current_user.bio if current_user and current_user.bio else 'No bio added yet. Click "Edit Profile" to add a short overview about your career goals and interests.' }}
+                            </p>
+                        </div>
+
+                        <!-- Skills Tags -->
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-code text-blue-500"></i> Skills & Technologies
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                {% if current_user and current_user.skills %}
+                                    {% for skill in current_user.skills.split(',') %}
+                                        <span class="bg-blue-950/80 text-blue-400 border border-blue-800/50 text-[11px] px-3 py-1 rounded-full font-medium">
+                                            {{ skill.strip() }}
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-xs text-gray-500">No skills added yet.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resume Download Link -->
+                    <div class="bg-[#090F24] p-4 rounded-lg border border-gray-800/80 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-pdf text-red-500"></i> Resume / CV
+                            </h4>
+                            {% if current_user and current_user.resume %}
+                                <p class="text-xs text-gray-400 mb-3">Your uploaded PDF resume is available for recruiters.</p>
+                            {% else %}
+                                <p class="text-xs text-gray-500 mb-3">No resume uploaded yet. Please update your profile to attach your CV.</p>
+                            {% endif %}
+                        </div>
+
+                        {% if current_user and current_user.resume %}
+                            <a href="{{ url_for('static', filename='uploads/' + current_user.resume) }}" target="_blank" 
+                               class="bg-red-600/10 border border-red-600/40 text-red-400 hover:bg-red-600 hover:text-white transition text-xs py-2 px-3 rounded font-semibold text-center flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download text-xs"></i> View Attached Resume
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
         </div>
-    </header>
+    </section>
 
     <!-- Stats Overview Cards -->
-    <section class="mx-6 sm:mx-12 lg:mx-24 -mt-12 relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#0F1938] p-6 rounded-xl border border-gray-800/80 shadow-2xl">
+    <section class="mx-6 sm:mx-12 lg:mx-24 mt-8 relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#0F1938] p-6 rounded-xl border border-gray-800/80 shadow-2xl">
         <div class="flex items-center gap-4 justify-center md:border-r border-gray-800 pb-2 md:pb-0">
             <div class="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500"><i class="fa-solid fa-paper-plane text-sm"></i></div>
             <div>
@@ -91,7 +211,7 @@
     </section>
 
     <!-- Main Workspace (Available Internships + Applied Status) -->
-    <section class="px-6 sm:px-12 lg:px-24 py-16">
+    <section class="px-6 sm:px-12 lg:px-24 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- Left Side: Available Internships Feed -->
@@ -123,7 +243,7 @@
                         <div class="flex items-center justify-between text-[10px] text-gray-400 pt-2 border-t border-gray-800/60">
                             <span class="flex items-center gap-1"><i class="fa-solid fa-location-dot text-blue-500"></i> {{ job.location }}</span>
                             
-                            {% if job.id in applied_job_ids %}
+                            {% if applied_job_ids and job.id in applied_job_ids %}
                                 <span class="bg-gray-800 text-gray-400 px-3 py-1 rounded font-semibold cursor-not-allowed">Already Applied</span>
                             {% else %}
                                 <a href="/apply/{{ job.id }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1 rounded transition flex items-center gap-1">
@@ -204,6 +324,84 @@
         </div>
     </section>
 
+    <!-- Edit Profile Modal Popup -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0F1938] border border-gray-800 rounded-xl w-full max-w-2xl p-6 relative shadow-2xl my-8">
+            <!-- Close Button -->
+            <button onclick="document.getElementById('editProfileModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <h3 class="text-lg font-bold text-white mb-6 border-b border-gray-800 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-user-gear text-blue-500"></i> Edit Student Profile
+            </h3>
+
+            <form action="/update-student-profile" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
+                <!-- Profile Pic, Cover Photo & Resume Upload -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">Profile Picture</label>
+                        <input type="file" name="profile_pic" accept="image/*" class="w-full bg-[#090F24] text-gray-300 p-2 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">Cover Photo</label>
+                        <input type="file" name="cover_photo" accept="image/*" class="w-full bg-[#090F24] text-gray-300 p-2 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">Upload Resume (PDF)</label>
+                        <input type="file" name="resume" accept=".pdf" class="w-full bg-[#090F24] text-gray-300 p-2 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- CGPA & Semester -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">CGPA</label>
+                        <input type="text" name="cgpa" value="{{ current_user.cgpa if current_user and current_user.cgpa else '' }}" placeholder="e.g. 3.75" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">Current Semester</label>
+                        <input type="text" name="semester" value="{{ current_user.semester if current_user and current_user.semester else '' }}" placeholder="e.g. 8th Semester" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-medium">Skills / Technologies (Comma Separated)</label>
+                    <input type="text" name="skills" value="{{ current_user.skills if current_user and current_user.skills else '' }}" placeholder="Python, Django, React, HTML, CSS, C++" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                </div>
+
+                <!-- Social Links -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">GitHub Profile URL</label>
+                        <input type="url" name="github_url" value="{{ current_user.github_url if current_user and current_user.github_url else '' }}" placeholder="https://github.com/username" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">LinkedIn URL</label>
+                        <input type="url" name="linkedin_url" value="{{ current_user.linkedin_url if current_user and current_user.linkedin_url else '' }}" placeholder="https://linkedin.com/in/username" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-1 font-medium">Portfolio Website (Optional)</label>
+                        <input type="url" name="portfolio_url" value="{{ current_user.portfolio_url if current_user and current_user.portfolio_url else '' }}" placeholder="https://myportfolio.com" class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Bio / About Me -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-medium">Bio / About Me</label>
+                    <textarea name="bio" rows="3" placeholder="Short description about yourself..." class="w-full bg-[#090F24] text-gray-200 p-2.5 rounded border border-gray-700 focus:border-blue-500">{{ current_user.bio if current_user and current_user.bio else '' }}</textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-800">
+                    <button type="button" onclick="document.getElementById('editProfileModal').classList.add('hidden')" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-[#080E21] border-t border-gray-800/80 pt-16 pb-6 px-6 sm:px-12 lg:px-24 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-12">
@@ -259,10 +457,10 @@
                     </li>
                 </ul>
                 <div class="flex gap-3 pt-2">
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
+                    <a href="https://www.facebook.com/nubccofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
+                    <a href="https://www.linkedin.com/company/nubccofficial/" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
+                    <a href="https://x.com/NUBCCofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
+                    <a href="https://www.youtube.com/@nubcomputerclub-nubcc3631" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
                 </div>
             </div>
         </div>
