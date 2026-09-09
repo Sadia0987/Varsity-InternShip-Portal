@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Varsity Internship Portal</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -29,17 +30,38 @@
         
         <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
             <a href="/" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Home</a>
-            <a href="#internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
-            <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
-            <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
-            <a href="#contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+            
+            {% if session.get('user_type') == 'alumni' %}
+                <!-- Alumni logged in: Only show Alumni link -->
+                <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
+            {% else %}
+                <!-- Non-Alumni Users (Student, Company, Visitor) -->
+                {% if session.get('user_type') != 'company' %}
+                    <!-- আপডেট: সোজাসুজি /internships রুটে লিংক দেয়া হলো যাতে flash() ট্রিগার হয় -->
+                    <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
+                {% endif %}
+
+                {% if not session.get('logged_in') %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                    <!-- আপডেট: সোজাসুজি /alumni রুটে লিংক দেয়া হলো যাতে flash() ট্রিগার হয় -->
+                    <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
+                    <a href="/contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+                {% elif session.get('user_type') == 'student' %}
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                    <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
+                {% elif session.get('user_type') == 'company' %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                    <a href="/contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+                {% endif %}
+            {% endif %}
             
             <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
 
             {% if session.get('logged_in') %}
                 <span class="text-right text-[12px] font-semibold text-blue-400 flex flex-col justify-center leading-tight whitespace-nowrap flex-shrink-0">
                     <span>
-                        <i class="fas {% if session.get('user_type') == 'company' %}fa-building{% else %}fa-user{% endif %} text-[10px] mr-1"></i> 
+                        <i class="fas {% if session.get('user_type') == 'company' %}fa-building{% elif session.get('user_type') == 'alumni' %}fa-user-graduate{% else %}fa-user{% endif %} text-[10px] mr-1"></i> 
                         {{ session.get('user_name', 'User') }}
                     </span>
                     <small class="text-[9px] text-gray-400 font-normal">({{ session.get('user_type', 'Member') | capitalize }})</small>
@@ -61,6 +83,8 @@
             <div class="flex flex-wrap gap-4">
                 {% if session.get('logged_in') and session.get('user_type') == 'company' %}
                     <a href="/company" class="bg-blue-600 text-xs px-6 py-3.5 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">Go to Recruiter Dashboard &rarr;</a>
+                {% elif session.get('logged_in') and session.get('user_type') == 'alumni' %}
+                    <a href="/alumni" class="bg-blue-600 text-xs px-6 py-3.5 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">Go to Alumni Portal &rarr;</a>
                 {% elif session.get('logged_in') and session.get('user_type') == 'student' %}
                     <a href="/student" class="bg-blue-600 text-xs px-6 py-3.5 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">Go to Student Portal &rarr;</a>
                 {% else %}
@@ -121,7 +145,17 @@
 
     <!-- Latest Internships Section -->
     <section id="internships" class="px-6 sm:px-12 lg:px-24 pb-20">
-        <h3 class="text-center text-xl font-extrabold mb-10">Latest Internships</h3>
+        <div class="flex justify-between items-center mb-10">
+            <h3 class="text-xl font-extrabold">Latest Internships</h3>
+            
+            {% if session.get('user_type') != 'company' and session.get('user_type') != 'alumni' %}
+                <!-- আপডেট: সোজাসুজি /internships রুটে লিংক দেয়া হলো -->
+                <a href="/internships" class="text-xs text-blue-400 hover:text-blue-300 font-semibold transition flex items-center gap-1">
+                    View All Opportunities &rarr;
+                </a>
+            {% endif %}
+        </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="bg-[#0F1938] p-5 rounded-xl border border-gray-800 relative flex flex-col justify-between shadow-md">
                 <div>
@@ -137,9 +171,14 @@
                         <span class="bg-gray-800 px-2 py-0.5 rounded">Python</span>
                         <span class="bg-gray-800 px-2 py-0.5 rounded">Django</span>
                     </div>
-                    <a href="/student" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+                    
+                    {% if session.get('user_type') != 'company' and session.get('user_type') != 'alumni' %}
+                        <!-- আপডেট: /internships রুটে লিংক দেয়া হলো -->
+                        <a href="/internships" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+                    {% endif %}
                 </div>
             </div>
+
             <div class="bg-[#0F1938] p-5 rounded-xl border border-gray-800 relative flex flex-col justify-between shadow-md">
                 <div>
                     <div class="flex justify-between items-start">
@@ -154,9 +193,14 @@
                         <span class="bg-gray-800 px-2 py-0.5 rounded">HTML</span>
                         <span class="bg-gray-800 px-2 py-0.5 rounded">CSS</span>
                     </div>
-                    <a href="/student" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+
+                    {% if session.get('user_type') != 'company' and session.get('user_type') != 'alumni' %}
+                        <!-- আপডেট: /internships রুটে লিংক দেয়া হলো -->
+                        <a href="/internships" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+                    {% endif %}
                 </div>
             </div>
+
             <div class="bg-[#0F1938] p-5 rounded-xl border border-gray-800 relative flex flex-col justify-between shadow-md">
                 <div>
                     <div class="flex justify-between items-start">
@@ -171,7 +215,11 @@
                         <span class="bg-gray-800 px-2 py-0.5 rounded">Python</span>
                         <span class="bg-gray-800 px-2 py-0.5 rounded">Flask</span>
                     </div>
-                    <a href="/student" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+
+                    {% if session.get('user_type') != 'company' and session.get('user_type') != 'alumni' %}
+                        <!-- আপডেট: /internships রুটে লিংক দেয়া হলো -->
+                        <a href="/internships" class="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-1">Apply Now &rarr;</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -213,10 +261,19 @@
                 <h5 class="font-bold text-gray-200 uppercase tracking-wider text-[11px]">Quick Links</h5>
                 <ul class="space-y-2 text-gray-400">
                     <li><a href="/" class="hover:text-blue-400 transition">Home</a></li>
-                    <li><a href="#internships" class="hover:text-blue-400 transition">Internships</a></li>
-                    <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
-                    <li><a href="/company" class="hover:text-blue-400 transition">For Companies</a></li>
-                    <li><a href="#contact" class="hover:text-blue-400 transition">Contact Us</a></li>
+                    
+                    {% if session.get('user_type') == 'alumni' %}
+                        <li><a href="/alumni" class="hover:text-blue-400 transition">Alumni Portal</a></li>
+                    {% else %}
+                        {% if session.get('user_type') != 'company' %}
+                            <!-- আপডেট: সোজাসুজি /internships রুটে লিংক দেয়া হলো -->
+                            <li><a href="/internships" class="hover:text-blue-400 transition">Internships</a></li>
+                        {% endif %}
+                        
+                        <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
+                        <li><a href="/company" class="hover:text-blue-400 transition">For Companies</a></li>
+                        <li><a href="/contact" class="hover:text-blue-400 transition">Contact Us</a></li>
+                    {% endif %}
                 </ul>
             </div>
 
@@ -248,10 +305,10 @@
                     </li>
                 </ul>
                 <div class="flex gap-3 pt-2">
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
+                    <a href="https://www.facebook.com/nubccofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
+                    <a href="https://www.linkedin.com/company/nubccofficial/" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
+                    <a href="https://x.com/NUBCCofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
+                    <a href="https://www.youtube.com/@nubcomputerclub-nubcc3631" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
                 </div>
             </div>
         </div>
