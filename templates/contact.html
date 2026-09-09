@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Faculty Members - Varsity Portal</title>
+
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0B132B; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between">
+
+    <!-- Navigation Bar -->
+    <nav class="flex flex-col lg:flex-row justify-between items-center gap-4 px-4 md:px-12 py-4 bg-[#090F24] border-b border-gray-800/60 sticky top-0 z-50">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <div class="logo-section" style="display: flex; align-items: center; gap: 12px;">
+                <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Logo" style="width: 45px; height: 45px; background-color: #ffffff; border-radius: 50%; padding: 4px; object-fit: contain;">
+                <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.2;">
+                    <h2 style="font-size: 16px; color: #ffffff; font-weight: 700; margin: 0; padding-bottom: 2px; white-space: nowrap;">Varsity Internship Portal</h2>
+                    <p style="font-size: 11px; color: #3b82f6; font-weight: 500; margin: 0; white-space: nowrap;">Department of Computer Science & Engineering</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
+            <a href="/" class="hover:text-white transition whitespace-nowrap">Home</a>
+
+            <!-- Conditional Internships Navbar Link: Company hole hide thakbe -->
+            {% if session.get('user_type') != 'company' %}
+                {% if session.get('logged_in') %}
+                    <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
+                {% else %}
+                    <a href="/login" class="hover:text-white transition whitespace-nowrap">Internships</a>
+                {% endif %}
+            {% endif %}
+
+            {% if not session.get('logged_in') %}
+                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                <a href="/login" class="hover:text-white transition whitespace-nowrap">Alumni</a>
+                <a href="/contact" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Contact</a>
+            {% elif session.get('user_type') == 'student' %}
+                <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                <a href="/alumni-profile" class="hover:text-white transition whitespace-nowrap">Alumni Profile</a>
+                <a href="/contact-alumni" class="hover:text-white transition whitespace-nowrap">Contact Alumni</a>
+            {% elif session.get('user_type') == 'company' %}
+                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                <a href="/contact" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Contact</a>
+            {% endif %}
+            
+            <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
+
+            {% if session.get('logged_in') %}
+                <span class="text-right text-[12px] font-semibold text-blue-400 flex flex-col justify-center leading-tight whitespace-nowrap flex-shrink-0">
+                    <span>
+                        <i class="fas {% if session.get('user_type') == 'company' %}fa-building{% else %}fa-user{% endif %} text-[10px] mr-1"></i> 
+                        {{ session.get('user_name', 'User') }}
+                    </span>
+                    <small class="text-[9px] text-gray-400 font-normal">({{ session.get('user_type', 'User') | capitalize }})</small>
+                </span>
+                <a href="/logout" class="border border-red-600 bg-red-600/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-red-600 transition whitespace-nowrap flex-shrink-0">Logout</a>
+            {% else %}
+                <a href="/login" class="border border-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-gray-800 transition whitespace-nowrap flex-shrink-0">Login</a>
+                <a href="/register" class="bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-blue-700 transition whitespace-nowrap flex-shrink-0">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-10 w-full space-y-12">
+
+        <!-- SECTION 1: Message Admin -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-[#0F1938] border border-gray-800 rounded-xl p-6 space-y-4">
+                <h3 class="font-bold text-sm text-gray-200 border-b border-gray-800 pb-2">Placement Office</h3>
+                <div class="space-y-3 text-xs text-gray-300">
+                    <p><i class="fa-solid fa-location-dot text-blue-500 mr-2"></i> Kawla Bazar, Ashkona, Dhaka</p>
+                    <p><i class="fa-solid fa-envelope text-blue-500 mr-2"></i> cse@varsity.edu.bd</p>
+                    <p><i class="fa-solid fa-phone text-blue-500 mr-2"></i> +880 1712-345678</p>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-[#0F1938] border border-gray-800 rounded-xl p-6">
+                <h3 class="font-bold text-sm text-gray-200 mb-3">Send Direct Message</h3>
+                
+                <!-- Direct WhatsApp Integration Form -->
+                <form id="whatsappForm" onsubmit="sendToWhatsApp(event)" class="space-y-3">
+                    <input type="text" id="waSubject" name="subject" required placeholder="Subject" class="w-full bg-[#090F24] border border-gray-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <textarea id="waMessage" name="message" rows="3" required placeholder="Your message..." class="w-full bg-[#090F24] border border-gray-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"></textarea>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2 rounded-lg transition flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Faculty Members (Only visible when LOGGED IN) -->
+        {% if session.get('logged_in') %}
+            <section>
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-white">Faculty Members</h3>
+                    <p class="text-xs text-gray-400">Department of Computer Science & Engineering</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- 1. Prof. Dr. (Engr.) Md. Mostafizur Rahman -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/mostafizur.jpg') }}" alt="Prof. Dr. (Engr.) Md. Mostafizur Rahman" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Prof. Dr. (Engr.) Md. Mostafizur Rahman</h4>
+                            <p class="text-xs font-semibold text-gray-300">Dean, Faculty of Science and Engineering</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                Dean, Faculty of Science and Engineering
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:dean.se@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345678')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Prof. Dr. Rubaiyat Yasmin -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/rubaiyat.jpg') }}" alt="Prof. Dr. Rubaiyat Yasmin" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Prof. Dr. Rubaiyat Yasmin</h4>
+                            <p class="text-xs font-semibold text-gray-300">Professor</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                PhD in ICS: Saitama University, Japan Masters in GITS : Waseda University M.Sc.: RU B.Sc.: RU
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:rubaiyat@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345679')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Md. Raihan-ul-Masood -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/raihan.jpg') }}" alt="Md. Raihan-ul-Masood" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Md. Raihan-ul-Masood</h4>
+                            <p class="text-xs font-semibold text-gray-300">Associate Professor & Head Dept. of CSE</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                M.Sc Computer Science, Lamar University Texas, USA; B.Sc(Hons) Mechanical Engineering, BUET
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:raihan.head@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345680')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Muhammed Samsuddoha Alam -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/samsuddoha.jpg') }}" alt="Muhammed Samsuddoha Alam" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Muhammed Samsuddoha Alam</h4>
+                            <p class="text-xs font-semibold text-gray-300">Associate Professor & Coordinator</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                M.Sc.in CSE; B.Sc.in CSE
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:samsuddoha@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345681')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Syed Maruful Huq -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/maruful.jpg') }}" alt="Syed Maruful Huq" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Syed Maruful Huq</h4>
+                            <p class="text-xs font-semibold text-gray-300">Assistant Professor</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                M.Sc. in Computer Science: University of Oklahoma, USA B.Sc. in Computer Science: NSU
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:maruful@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345682')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Dr. Mst. Najnin Sultana, Ph.D. -->
+                    <div class="bg-[#0F1938] border border-gray-800 hover:border-blue-500/50 rounded-xl p-4 transition duration-200 flex gap-4 items-start shadow-lg">
+                        <div class="w-24 h-28 md:w-28 md:h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
+                            <img src="{{ url_for('static', filename='Images/najnin.jpg') }}" alt="Dr. Mst. Najnin Sultana, Ph.D." class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow space-y-1">
+                            <h4 class="font-bold text-sm text-blue-400 leading-snug">Dr. Mst. Najnin Sultana, Ph.D.</h4>
+                            <p class="text-xs font-semibold text-gray-300">Assistant Professor</p>
+                            <p class="text-[11px] text-gray-400 leading-relaxed pt-1">
+                                Ph.D. and MS in Information and Communication Engineering: Inha University, South Korea, MS: DU, B.Sc.: DU
+                            </p>
+                            <div class="flex gap-3 pt-3">
+                                <a href="mailto:najnin@varsity.edu.bd" class="text-xs text-gray-400 hover:text-blue-400 transition" title="Send Email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <button onclick="copyToClipboard('+8801712345683')" class="text-xs text-gray-400 hover:text-green-400 transition" title="Copy Contact">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        {% else %}
+            <!-- SECTION 2 Alternation: Shown only when NOT logged in -->
+            <section class="about-section my-6">
+                <div class="bg-[#0F1938] p-6 sm:p-10 rounded-xl border border-gray-800/80 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-500">ABOUT THE PORTAL</span>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">Empowering Students & Accelerating Career Growth</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            Varsity Internship Portal (VIP) is an advanced, centralized network designed to eliminate the gap between university students and the tech industry. We offer a structured workspace where talent meets opportunity, supporting interactive profiles, real-time application tracking, and direct faculty feedback.
+                        </p>
+                    </div>
+                    <div class="lg:col-span-5 relative w-full">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=500" alt="Students" class="rounded-lg border border-gray-700 w-full h-[180px] object-cover filter brightness-90">
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#080E21] border-t border-gray-800/80 py-4 text-center text-[10px] text-gray-500">
+        &copy; 2026 Varsity Internship Portal. All rights reserved.
+    </footer>
+
+    <script>
+        function sendToWhatsApp(event) {
+            event.preventDefault(); // ফর্মের পেজ রিফ্রেশ বন্ধ করবে
+
+            // এখানে আপনার আসল হোয়াটসঅ্যাপ নম্বরটি বসাবেন (country code 880 সহ)
+            const myPhoneNumber = "8801995953198"; 
+
+            const subject = document.getElementById("waSubject").value;
+            const message = document.getElementById("waMessage").value;
+
+            // হোয়াটসঅ্যাপ মেসেজের বয়ান
+            const fullText = `*New Contact Message*\n\n*Subject:* ${subject}\n*Message:* ${message}`;
+
+            // URL তৈরি করে নতুন ট্যাবে ওপেন করবে
+            const whatsappUrl = `https://wa.me/${myPhoneNumber}?text=${encodeURIComponent(fullText)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Contact Number Copied: " + text);
+            }).catch(err => {
+                console.error('Copy failed: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

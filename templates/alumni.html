@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varsity Internship Portal - Network with Alumni</title>
+
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0B132B; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="flex flex-col lg:flex-row justify-between items-center gap-4 px-4 md:px-12 py-4 bg-[#090F24] border-b border-gray-800/60 sticky top-0 z-50">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <div class="logo-section" style="display: flex; align-items: center; gap: 12px;">
+                <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Logo" style="width: 45px; height: 45px; background-color: #ffffff; border-radius: 50%; padding: 4px; object-fit: contain;">
+                <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.2;">
+                    <h2 style="font-size: 16px; color: #ffffff; font-weight: 700; margin: 0; padding-bottom: 2px; white-space: nowrap;">Varsity Internship Portal</h2>
+                    <p style="font-size: 11px; color: #3b82f6; font-weight: 500; margin: 0; white-space: nowrap;">Department of Computer Science & Engineering</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
+            <a href="/" class="hover:text-white transition whitespace-nowrap">Home</a>
+
+            {% if session.get('user_type') == 'alumni' %}
+                <a href="/alumni" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Alumni</a>
+            {% else %}
+                <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
+
+                {% if not session.get('logged_in') %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                {% elif session.get('user_type') == 'student' %}
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                {% elif session.get('user_type') == 'company' %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                {% endif %}
+
+                <a href="/alumni" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Alumni</a>
+            {% endif %}
+            
+            <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
+
+            {% if session.get('logged_in') %}
+                <span class="text-right text-[12px] font-semibold text-blue-400 flex flex-col justify-center leading-tight whitespace-nowrap flex-shrink-0">
+                    <span><i class="fas fa-user-graduate text-[10px] mr-1"></i> {{ session.get('user_name', 'User') }}</span>
+                    <small class="text-[9px] text-gray-400 font-normal">({{ session.get('user_type', 'User') | capitalize }})</small>
+                </span>
+                <a href="/logout" class="border border-red-600 bg-red-600/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-red-600 transition whitespace-nowrap flex-shrink-0">Logout</a>
+            {% else %}
+                <a href="/login" class="border border-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-gray-800 transition whitespace-nowrap flex-shrink-0">Login</a>
+                <a href="/register" class="bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-blue-700 transition whitespace-nowrap flex-shrink-0">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="max-w-4xl mx-auto mt-4 px-4">
+          {% for message in messages %}
+            <div class="bg-blue-600/20 border border-blue-500 text-blue-200 text-xs px-4 py-3 rounded-lg text-center">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Header / Hero Section -->
+    <header class="relative bg-cover bg-center min-h-[280px] md:h-[300px] flex items-center px-6 sm:px-12 lg:px-24 py-10" style="background-image: linear-gradient(rgba(9, 15, 36, 0.88), rgba(9, 15, 36, 0.95)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200');">
+        <div class="max-w-3xl relative z-10 w-full">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-2 block">Alumni Network & Mentorship</span>
+            <h2 class="text-3xl sm:text-4xl font-black mb-3 leading-tight tracking-tight">Connect with CSE Alumni</h2>
+            <p class="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-2xl">Network with experienced graduates working in top tech industries, seek career mentorship, and explore referral opportunities.</p>
+        </div>
+    </header>
+
+    <!-- Alumni Directory Section -->
+    <section class="px-6 sm:px-12 lg:px-24 py-12">
+        
+        <!-- Search Bar -->
+        <div class="bg-[#0F1938] p-4 rounded-xl border border-gray-800 shadow-lg mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="relative w-full md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                <input type="text" id="searchInput" onkeyup="filterAlumni()" placeholder="Search by name, company, batch, or designation..." class="w-full bg-[#090F24] border border-gray-800 rounded-lg pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div class="text-xs text-gray-400 font-medium">
+                Showing verified CSE Department Alumni
+            </div>
+        </div>
+
+        <!-- Alumni Grid -->
+        <div id="alumniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {% if alumni_list %}
+                {% for alumnus in alumni_list %}
+                <div class="alumni-card bg-[#0F1938] rounded-xl border border-gray-800/80 p-6 shadow-xl hover:border-blue-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start gap-4 mb-4">
+                            <!-- Profile Picture or Default Avatar -->
+                            {% if alumnus.profile_pic %}
+                                <img src="{{ url_for('static', filename='uploads/' ~ alumnus.profile_pic) }}" alt="Profile" class="w-14 h-14 rounded-full border border-blue-500/30 object-cover flex-shrink-0">
+                            {% else %}
+                                <div class="w-14 h-14 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-lg flex-shrink-0">
+                                    {{ alumnus.fullname[0] if alumnus.fullname else 'A' }}
+                                </div>
+                            {% endif %}
+
+                            <div class="overflow-hidden w-full">
+                                <div class="flex items-center justify-between gap-1">
+                                    <h4 class="font-bold text-base text-white truncate search-name">{{ alumnus.fullname }}</h4>
+                                    {% if alumnus.blood_group %}
+                                        <span class="bg-red-900/40 border border-red-500/50 text-red-300 text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
+                                            <i class="fa-solid fa-droplet text-[9px] mr-0.5"></i>{{ alumnus.blood_group }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-xs text-blue-400 font-medium truncate search-desig">{{ alumnus.designation if alumnus.designation else 'Not Specified' }}</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5 truncate search-comp"><i class="fa-solid fa-building text-[10px] text-gray-500 mr-1"></i> {{ alumnus.company_name if alumnus.company_name else 'Not Specified' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-xs text-gray-300 border-t border-b border-gray-800/80 py-3 my-3">
+                            <div class="flex items-center gap-2 text-[11px] text-gray-400">
+                                <i class="fa-solid fa-graduation-cap text-blue-500"></i>
+                                <span>Batch Number: <strong class="text-gray-200 search-batch">{{ alumnus.passing_year if alumnus.passing_year else 'N/A' }}</strong></span>
+                            </div>
+
+                            {% if alumnus.job_duration %}
+                            <div class="flex items-center gap-2 text-[11px] text-gray-400">
+                                <i class="fa-solid fa-clock text-blue-500"></i>
+                                <span>Duration: {{ alumnus.job_duration }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if alumnus.previous_companies %}
+                            <div class="flex items-center gap-2 text-[11px] text-gray-400 truncate">
+                                <i class="fa-solid fa-history text-blue-500"></i>
+                                <span class="truncate">Previous: {{ alumnus.previous_companies }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="flex items-center gap-2 text-[11px] text-gray-400 truncate">
+                                <i class="fa-solid fa-envelope text-blue-500"></i>
+                                <span class="truncate">{{ alumnus.email }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex items-center gap-2">
+                        {% if session.get('logged_in') and session.get('user_id') == alumnus.id %}
+                            <button type="button"
+                                    data-company="{{ alumnus.company_name or '' }}" 
+                                    data-designation="{{ alumnus.designation or '' }}" 
+                                    data-passingyear="{{ alumnus.passing_year or '' }}"
+                                    data-whatsapp="{{ alumnus.whatsapp_no or '' }}"
+                                    data-duration="{{ alumnus.job_duration or '' }}"
+                                    data-previous="{{ alumnus.previous_companies or '' }}"
+                                    data-bloodgroup="{{ alumnus.blood_group or '' }}"
+                                    onclick="openModalFromBtn(this)" 
+                                    class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-center text-xs py-2 rounded-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit Profile
+                            </button>
+                        {% else %}
+                            {% if alumnus.whatsapp_no %}
+                                {% set raw_num = alumnus.whatsapp_no | replace('+', '') | replace('-', '') | replace(' ', '') %}
+                                {% if raw_num.startswith('88') %}
+                                    {% set final_num = raw_num %}
+                                {% elif raw_num.startswith('0') %}
+                                    {% set final_num = '88' + raw_num %}
+                                {% else %}
+                                    {% set final_num = '880' + raw_num %}
+                                {% endif %}
+
+                                {% set default_msg = "Hi, I got your contact from the Varsity Internship Portal. I would like to connect with you." | urlencode %}
+
+                                <a href="https://api.whatsapp.com/send?phone={{ final_num }}&text={{ default_msg }}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-center text-xs py-2 rounded-lg transition flex items-center justify-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp Direct
+                                </a>
+                            {% else %}
+                                <a href="mailto:{{ alumnus.email }}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center text-xs py-2 rounded-lg transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Contact Alumni
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-span-full text-center py-12 text-gray-400 text-xs">
+                    No verified alumni profiles found in the database yet.
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#0F1938] border border-gray-800 w-full max-w-md rounded-xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-user-gear text-blue-500"></i> Edit Alumni Profile
+            </h3>
+            
+            <form action="/update-alumni-profile" method="POST" enctype="multipart/form-data" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">Profile Photo</label>
+                    <input type="file" name="profile_pic" accept="image/*" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-1.5 text-gray-300 focus:outline-none focus:border-blue-500 file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Current Company Name</label>
+                    <input type="text" name="company_name" id="modal_company" placeholder="e.g. Brain Station 23" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Designation</label>
+                    <input type="text" name="designation" id="modal_designation" placeholder="e.g. Software Engineer" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Job Duration / Experience</label>
+                    <input type="text" name="job_duration" id="modal_job_duration" placeholder="e.g. 1 Year 6 Months" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Previous Companies (History)</label>
+                    <input type="text" name="previous_companies" id="modal_previous_companies" placeholder="e.g. Selise (1 yr), TigerIT (6 mos)" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Blood Group</label>
+                    <select name="blood_group" id="modal_blood_group" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">WhatsApp Number (with Country Code)</label>
+                    <input type="text" name="whatsapp_no" id="modal_whatsapp" placeholder="e.g. 8801700000000" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Batch Number</label>
+                    <input type="text" name="passing_year" id="modal_passing_year" placeholder="e.g. 56 or 56th" class="w-full bg-[#090F24] border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-gray-300 font-medium transition cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition cursor-pointer">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#080E21] border-t border-gray-800/80 pt-16 pb-6 px-6 sm:px-12 lg:px-24 text-xs mt-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-12">
+            
+            <div class="lg:col-span-4 space-y-4">
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Varsity Logo" class="w-11 h-11 object-contain rounded-full bg-white p-1">
+                    <div>
+                        <h4 class="font-bold text-gray-100 text-sm">Varsity Internship Portal</h4>
+                        <p class="text-[9px] text-blue-500 font-medium">Department of Computer Science & Engineering</p>
+                    </div>
+                </div>
+                <p class="text-gray-400 leading-relaxed text-[11px] pr-6">
+                    Empowering CSE students to build successful careers through verified internships and industry collaboration.
+                </p>
+            </div>
+
+            <div class="lg:col-span-2 space-y-3">
+                <h5 class="font-bold text-gray-200 uppercase tracking-wider text-[11px]">Quick Links</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="/" class="hover:text-blue-400 transition">Home</a></li>
+                    
+                    {% if session.get('user_type') == 'alumni' %}
+                        <li><a href="/alumni" class="hover:text-blue-400 transition">Alumni Portal</a></li>
+                    {% else %}
+                        {% if session.get('user_type') != 'company' %}
+                            {% if session.get('logged_in') %}
+                                <li><a href="/internships" class="hover:text-blue-400 transition">Internships</a></li>
+                            {% else %}
+                                <li><a href="/login" class="hover:text-blue-400 transition">Internships</a></li>
+                            {% endif %}
+                        {% endif %}
+                        <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
+                        <li><a href="/company" class="hover:text-blue-400 transition">For Companies</a></li>
+                        <li><a href="/contact" class="hover:text-blue-400 transition">Contact Us</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="lg:col-span-2 space-y-3">
+                <h5 class="font-bold text-gray-200 uppercase tracking-wider text-[11px]">Resources</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-blue-400 transition">How It Works</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">Guidelines</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">FAQ</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="lg:col-span-4 space-y-3">
+                <h5 class="font-bold text-gray-200 uppercase tracking-wider text-[11px]">Contact Us</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot mt-0.5 text-blue-500 text-[10px]"></i>
+                        <span>kawla Bazar,Ashkona,Dakshinkhan,Dhaka, Bangladesh</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-blue-500 text-[10px]"></i>
+                        <a href="mailto:cse@varsity.edu.bd" class="hover:underline">cse@varsity.edu.bd</a>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-phone text-blue-500 text-[10px]"></i>
+                        <span>+880 1712-345678</span>
+                    </li>
+                </ul>
+                <div class="flex gap-3 pt-2">
+                    <a href="https://www.facebook.com/nubccofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
+                    <a href="https://www.linkedin.com/company/nubccofficial/" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
+                    <a href="https://x.com/NUBCCofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
+                    <a href="https://www.youtube.com/@nubcomputerclub-nubcc3631" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="border-t border-gray-800/50 pt-4 text-center text-[10px] text-gray-500">
+            &copy; 2026 Varsity Internship Portal. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function openModalFromBtn(button) {
+            document.getElementById('modal_company').value = button.getAttribute('data-company');
+            document.getElementById('modal_designation').value = button.getAttribute('data-designation');
+            document.getElementById('modal_passing_year').value = button.getAttribute('data-passingyear');
+            document.getElementById('modal_whatsapp').value = button.getAttribute('data-whatsapp');
+            document.getElementById('modal_job_duration').value = button.getAttribute('data-duration');
+            document.getElementById('modal_previous_companies').value = button.getAttribute('data-previous');
+            document.getElementById('modal_blood_group').value = button.getAttribute('data-bloodgroup');
+
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editModal').classList.add('flex');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+        }
+
+        function filterAlumni() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('alumni-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].querySelector('.search-name') ? cards[i].querySelector('.search-name').innerText.toLowerCase() : '';
+                let desig = cards[i].querySelector('.search-desig') ? cards[i].querySelector('.search-desig').innerText.toLowerCase() : '';
+                let comp = cards[i].querySelector('.search-comp') ? cards[i].querySelector('.search-comp').innerText.toLowerCase() : '';
+                let batch = cards[i].querySelector('.search-batch') ? cards[i].querySelector('.search-batch').innerText.toLowerCase() : '';
+
+                if (name.includes(input) || desig.includes(input) || comp.includes(input) || batch.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
