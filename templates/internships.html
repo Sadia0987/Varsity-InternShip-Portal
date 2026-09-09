@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Varsity Internship Portal - All Internships</title>
+    
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -26,25 +30,31 @@
         
         <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
             <a href="/" class="hover:text-white transition whitespace-nowrap">Home</a>
-            <a href="/internships" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Internships</a>
 
-            <!-- Conditional Navigation Links -->
-            {% if not session.get('logged_in') %}
-                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
-                <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
-            {% elif session.get('user_type') == 'student' %}
-                <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
-            {% elif session.get('user_type') == 'company' %}
-                <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+            {% if session.get('user_type') == 'alumni' %}
+                <!-- Alumni logged in: Only show Home and Alumni -->
+                <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
+            {% else %}
+                <!-- Other Users (Student / Company / Guest) -->
+                <a href="/internships" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">Internships</a>
+
+                {% if not session.get('logged_in') %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                {% elif session.get('user_type') == 'student' %}
+                    <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                {% elif session.get('user_type') == 'company' %}
+                    <a href="/company" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                {% endif %}
+
+                <a href="/alumni" class="hover:text-white transition whitespace-nowrap">Alumni</a>
             {% endif %}
-
-            <a href="#" class="hover:text-white transition whitespace-nowrap">Contact</a>
             
             <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
 
             {% if session.get('logged_in') %}
                 <span class="text-right text-[12px] font-semibold text-blue-400 flex flex-col justify-center leading-tight whitespace-nowrap flex-shrink-0">
-                    <span><i class="fas fa-user text-[10px] mr-1"></i> {{ session.get('user_name', 'User') }}</span>
+                    <span><i class="fas fa-user-graduate text-[10px] mr-1"></i> {{ session.get('user_name', 'User') }}</span>
                     <small class="text-[9px] text-gray-400 font-normal">({{ session.get('user_type', 'User') | capitalize }})</small>
                 </span>
                 <a href="/logout" class="border border-red-600 bg-red-600/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-white font-semibold hover:bg-red-600 transition whitespace-nowrap flex-shrink-0">Logout</a>
@@ -187,7 +197,7 @@
                     <li><a href="/internships" class="hover:text-blue-400 transition">Internships</a></li>
                     <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
                     <li><a href="/company" class="hover:text-blue-400 transition">For Companies</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Contact Us</a></li>
+                    <li><a href="/alumni" class="hover:text-blue-400 transition">Alumni</a></li>
                 </ul>
             </div>
 
@@ -219,10 +229,10 @@
                     </li>
                 </ul>
                 <div class="flex gap-3 pt-2">
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
+                    <a href="https://www.facebook.com/nubccofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
+                    <a href="https://www.linkedin.com/company/nubccofficial/" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
+                    <a href="https://x.com/NUBCCofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
+                    <a href="https://www.youtube.com/results?search_query=nubcc" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
                 </div>
             </div>
         </div>

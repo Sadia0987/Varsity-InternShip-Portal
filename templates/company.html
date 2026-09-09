@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Varsity Internship Portal - For Companies</title>
+
+    <!-- Tab Logo / Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Images/Logo.png') }}">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -29,10 +33,20 @@
         
         <div class="flex items-center justify-center gap-2 md:gap-4 lg:gap-5 text-[11px] sm:text-xs font-medium text-gray-300 flex-nowrap overflow-x-auto max-w-full py-1">
             <a href="/" class="hover:text-white transition whitespace-nowrap">Home</a>
-            <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
-            <a href="/company" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">For Companies</a>
-            <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
-            <a href="#" class="hover:text-white transition whitespace-nowrap">Contact</a>
+
+            <!-- Navbar Links Based on User State -->
+            {% if not session.get('logged_in') %}
+                <a href="/login" class="hover:text-white transition whitespace-nowrap">For Companies</a>
+                <a href="/login" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                <a href="/contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+            {% elif session.get('user_type') == 'student' %}
+                <a href="/internships" class="hover:text-white transition whitespace-nowrap">Internships</a>
+                <a href="/student" class="hover:text-white transition whitespace-nowrap">For Students</a>
+                <a href="/contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+            {% elif session.get('user_type') == 'company' %}
+                <a href="/company" class="text-white border-b-2 border-blue-500 pb-1 whitespace-nowrap">For Companies</a>
+                <a href="/contact" class="hover:text-white transition whitespace-nowrap">Contact</a>
+            {% endif %}
             
             <div class="h-4 w-[1px] bg-gray-700 mx-1 hidden sm:block"></div>
 
@@ -63,7 +77,7 @@
         <div class="flex items-center gap-4 justify-center md:border-r border-gray-800 pb-2 md:pb-0">
             <div class="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500"><i class="fa-solid fa-briefcase text-sm"></i></div>
             <div>
-                <div class="text-lg sm:text-xl font-black">{{ total_posted if total_posted else 0 }}</div>
+                <div class="text-lg sm:text-xl font-black">{{ internships|length if internships else (total_posted if total_posted else 0) }}</div>
                 <div class="text-[11px] text-gray-400">Posted Internships</div>
             </div>
         </div>
@@ -95,7 +109,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- Left Side: Post New Internship Form -->
-            <div class="lg:col-span-5 bg-[#0F1938] p-6 sm:p-8 rounded-xl border border-gray-800 shadow-xl h-fit">
+            <div class="lg:col-span-4 bg-[#0F1938] p-6 sm:p-8 rounded-xl border border-gray-800 shadow-xl h-fit">
                 <div class="flex items-center gap-3 mb-6 border-b border-gray-800 pb-4">
                     <div class="w-8 h-8 rounded-lg bg-blue-600/10 text-blue-500 flex items-center justify-center">
                         <i class="fa-solid fa-plus text-xs"></i>
@@ -134,8 +148,8 @@
                 </form>
             </div>
 
-            <!-- Right Side: Received Applications Table -->
-            <div class="lg:col-span-7 bg-[#0F1938] p-6 sm:p-8 rounded-xl border border-gray-800 shadow-xl">
+            <!-- Right Side: Received Applications Table (Updated with Student Info & Resume View) -->
+            <div class="lg:col-span-8 bg-[#0F1938] p-6 sm:p-8 rounded-xl border border-gray-800 shadow-xl">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-purple-600/10 text-purple-500 flex items-center justify-center">
@@ -143,7 +157,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-sm text-gray-100">Received Applications</h3>
-                            <p class="text-[10px] text-gray-400">Review and shortlist student candidates</p>
+                            <p class="text-[10px] text-gray-400">Review, view CVs, and shortlist student candidates</p>
                         </div>
                     </div>
                 </div>
@@ -154,6 +168,8 @@
                         <thead class="bg-[#090F24] text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-800">
                             <tr>
                                 <th class="py-3 px-3">Candidate</th>
+                                <th class="py-3 px-3">Info & Skills</th>
+                                <th class="py-3 px-3">CV / Resume</th>
                                 <th class="py-3 px-3">Position</th>
                                 <th class="py-3 px-3">Status</th>
                                 <th class="py-3 px-3 text-right">Action</th>
@@ -162,28 +178,53 @@
                         <tbody class="divide-y divide-gray-800/60">
                             {% for app in applications %}
                             <tr class="hover:bg-[#111C3D] transition">
+                                <!-- Candidate Fullname & Email -->
                                 <td class="py-3.5 px-3">
-                                    <div class="font-bold text-gray-100">{{ app.student.username }}</div>
-                                    <div class="text-[10px] text-gray-400">{{ app.student.email if app.student.email else 'Student Candidate' }}</div>
+                                    <div class="font-bold text-gray-100">{{ app.student.fullname if app.student else 'Unknown Student' }}</div>
+                                    <div class="text-[10px] text-gray-400">{{ app.student.email if app.student else '' }}</div>
                                 </td>
-                                <td class="py-3.5 px-3">
-                                    <span class="text-blue-400 font-medium">{{ app.internship.title }}</span>
+
+                                <!-- Candidate Info & Skills -->
+                                <td class="py-3.5 px-3 text-[11px]">
+                                    <div><span class="text-gray-400">Dept:</span> {{ app.student.department if app.student and app.student.department else 'N/A' }}</div>
+                                    <div><span class="text-gray-400">CGPA:</span> <span class="text-amber-400 font-semibold">{{ app.student.cgpa if app.student and app.student.cgpa else 'N/A' }}</span></div>
+                                    <div class="truncate max-w-[150px]"><span class="text-gray-400">Skills:</span> {{ app.student.skills if app.student and app.student.skills else 'N/A' }}</div>
                                 </td>
+
+                                <!-- CV / Resume View Link -->
                                 <td class="py-3.5 px-3">
-                                    {% if app.status == 'Pending' %}
+                                    {% if app.student and app.student.resume %}
+                                        <a href="{{ url_for('static', filename='uploads/' + app.student.resume) }}" target="_blank" class="inline-flex items-center gap-1 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-1 rounded text-[10px] hover:bg-cyan-600 hover:text-white transition">
+                                            <i class="fa-solid fa-file-pdf"></i> View CV
+                                        </a>
+                                    {% else %}
+                                        <span class="text-[10px] text-gray-500">No CV</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Position Applied -->
+                                <td class="py-3.5 px-3">
+                                    <span class="text-blue-400 font-medium">{{ app.internship.title if app.internship else 'N/A' }}</span>
+                                </td>
+
+                                <!-- Application Status -->
+                                <td class="py-3.5 px-3">
+                                    {% if app.status == 'pending' %}
                                         <span class="text-[10px] bg-amber-950/80 text-amber-400 border border-amber-800/50 font-semibold px-2 py-0.5 rounded">Pending</span>
-                                    {% elif app.status == 'Shortlisted' %}
-                                        <span class="text-[10px] bg-green-950/80 text-green-400 border border-green-800/50 font-semibold px-2 py-0.5 rounded">Shortlisted</span>
+                                    {% elif app.status == 'accepted' %}
+                                        <span class="text-[10px] bg-green-950/80 text-green-400 border border-green-800/50 font-semibold px-2 py-0.5 rounded">Accepted</span>
                                     {% else %}
                                         <span class="text-[10px] bg-red-950/80 text-red-400 border border-red-800/50 font-semibold px-2 py-0.5 rounded">Rejected</span>
                                     {% endif %}
                                 </td>
+
+                                <!-- Status Change Actions -->
                                 <td class="py-3.5 px-3 text-right">
                                     <div class="flex items-center justify-end gap-1.5">
-                                        <a href="/update-status/{{ app.id }}/Shortlisted" class="w-7 h-7 rounded bg-green-600/20 text-green-400 border border-green-600/30 hover:bg-green-600 hover:text-white transition flex items-center justify-center" title="Shortlist Candidate">
+                                        <a href="{{ url_for('update_application_status', app_id=app.id, status='accepted') }}" class="w-7 h-7 rounded bg-green-600/20 text-green-400 border border-green-600/30 hover:bg-green-600 hover:text-white transition flex items-center justify-center" title="Accept Candidate">
                                             <i class="fa-solid fa-check text-[10px]"></i>
                                         </a>
-                                        <a href="/update-status/{{ app.id }}/Rejected" class="w-7 h-7 rounded bg-red-600/20 text-red-400 border border-red-600/30 hover:bg-red-600 hover:text-white transition flex items-center justify-center" title="Reject Candidate">
+                                        <a href="{{ url_for('update_application_status', app_id=app.id, status='rejected') }}" class="w-7 h-7 rounded bg-red-600/20 text-red-400 border border-red-600/30 hover:bg-red-600 hover:text-white transition flex items-center justify-center" title="Reject Candidate">
                                             <i class="fa-solid fa-xmark text-[10px]"></i>
                                         </a>
                                     </div>
@@ -203,6 +244,55 @@
                 {% endif %}
             </div>
 
+        </div>
+    </section>
+
+    <!-- Published Internships Section -->
+    <section class="px-6 sm:px-12 lg:px-24 pb-16">
+        <div class="bg-[#0F1938] p-6 sm:p-8 rounded-xl border border-gray-800 shadow-xl">
+            <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600/10 text-blue-500 flex items-center justify-center">
+                        <i class="fa-solid fa-list-check text-xs"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-100">Your Published Internships</h3>
+                        <p class="text-[10px] text-gray-400">Manage and view internship posts created by your company</p>
+                    </div>
+                </div>
+                <span class="text-xs bg-blue-600/20 text-blue-400 font-semibold px-3 py-1 rounded-full border border-blue-500/30">
+                    Total: {{ internships|length if internships else 0 }}
+                </span>
+            </div>
+
+            {% if internships %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for item in internships %}
+                <div class="bg-[#090F24] p-5 rounded-lg border border-gray-800 hover:border-blue-500/40 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-sm text-blue-400">{{ item.title }}</h4>
+                            <span class="text-[9px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded font-medium border border-green-500/20">Active</span>
+                        </div>
+                        <p class="text-[11px] text-gray-300 mb-3 line-clamp-3 leading-relaxed">{{ item.description }}</p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-800/80 text-[10px] text-gray-400 space-y-1">
+                        <div class="flex justify-between">
+                            <span><i class="fa-solid fa-location-dot text-blue-500 mr-1"></i> {{ item.location if item.location else 'Not specified' }}</span>
+                            <span class="font-semibold text-gray-200"><i class="fa-solid fa-money-bill text-green-500 mr-1"></i> {{ item.stipend if item.stipend else 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Published State -->
+            <div class="text-center py-8 border border-dashed border-gray-800 rounded-lg">
+                <i class="fa-solid fa-file-circle-xmark text-gray-600 text-2xl mb-2"></i>
+                <p class="text-xs text-gray-400 font-medium">You haven't published any internships yet.</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">Use the "Post New Internship" form above to publish your first post.</p>
+            </div>
+            {% endif %}
         </div>
     </section>
 
@@ -226,10 +316,12 @@
                 <h5 class="font-bold text-gray-200 uppercase tracking-wider text-[11px]">Quick Links</h5>
                 <ul class="space-y-2 text-gray-400">
                     <li><a href="/" class="hover:text-blue-400 transition">Home</a></li>
-                    <li><a href="/internships" class="hover:text-blue-400 transition">Internships</a></li>
-                    <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
+                    {% if session.get('user_type') != 'company' %}
+                        <li><a href="/internships" class="hover:text-blue-400 transition">Internships</a></li>
+                        <li><a href="/student" class="hover:text-blue-400 transition">For Students</a></li>
+                    {% endif %}
                     <li><a href="/company" class="hover:text-blue-400 transition">For Companies</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Contact Us</a></li>
+                    <li><a href="/contact" class="hover:text-blue-400 transition">Contact Us</a></li>
                 </ul>
             </div>
 
@@ -261,10 +353,10 @@
                     </li>
                 </ul>
                 <div class="flex gap-3 pt-2">
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
-                    <a href="#" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
+                    <a href="https://www.facebook.com/nubccofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-facebook-f text-[11px]"></i></a>
+                    <a href="https://www.linkedin.com/company/nubccofficial/" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-400 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-linkedin-in text-[11px]"></i></a>
+                    <a href="https://x.com/NUBCCofficial" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-blue-500 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-twitter text-[11px]"></i></a>
+                    <a href="https://www.youtube.com/@nubcomputerclub-nubcc3631" class="w-7 h-7 rounded-full bg-gray-800/80 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-gray-400"><i class="fa-brands fa-youtube text-[11px]"></i></a>
                 </div>
             </div>
         </div>
