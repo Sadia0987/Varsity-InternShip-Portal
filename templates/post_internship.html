@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Post New Internship</title>
+    <!-- Tailwind CSS / Bootstrap CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex justify-center items-center min-h-screen">
+    <div class="bg-slate-800 p-8 rounded-lg w-full max-w-xl border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 text-blue-400">Post a New Internship</h2>
+        
+        <form action="/post-internship" method="POST" class="space-y-4">
+            <div>
+                <label class="block mb-1">Job Title</label>
+                <input type="text" name="title" required class="w-full p-2 bg-slate-700 rounded border border-slate-600 text-white">
+            </div>
+            
+            <div>
+                <label class="block mb-1">Job Description</label>
+                <textarea name="description" rows="4" required class="w-full p-2 bg-slate-700 rounded border border-slate-600 text-white"></textarea>
+            </div>
+            
+            <div>
+                <label class="block mb-1">Requirements</label>
+                <input type="text" name="requirements" placeholder="e.g. Python, React, SQL" class="w-full p-2 bg-slate-700 rounded border border-slate-600 text-white">
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition">
+                Publish Internship
+            </button>
+        </form>
+    </div>
+</body>
+</html>

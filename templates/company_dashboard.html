@@ -1,0 +1,17 @@
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Your Published Internships</h1>
+    
+    <a href="/post-internship" class="bg-green-600 px-4 py-2 rounded mb-6 inline-block">+ Post New Internship</a>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for post in posts %}
+        <div class="bg-slate-800 p-4 rounded border border-slate-700">
+            <h3 class="text-xl font-bold text-blue-400">{{ post.title }}</h3>
+            <p class="text-slate-300 mt-2">{{ post.description }}</p>
+            <span class="text-sm text-slate-400 mt-4 block">Requirements: {{ post.requirements }}</span>
+        </div>
+        {% else %}
+        <p>No internships published yet.</p>
+        {% endfor %}
+    </div>
+</div>
