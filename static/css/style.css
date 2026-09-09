@@ -1,3 +1,6 @@
+/* ==========================================
+   GLOBAL RESET & BASE
+   ========================================== */
 * {
     margin: 0;
     padding: 0;
@@ -6,18 +9,18 @@
 }
 
 body {
-    background-color: #0b1228; 
+    background-color: #0b1228;
     color: #ffffff;
     line-height: 1.6;
-    overflow-x: hidden; /* স্ক্রিন ছোট হলে ডানে-বামে যেন স্ক্রলবার না আসে */
+    overflow-x: hidden;
 }
 
 /* ==========================================
-   ১. NAVBAR STYLING (ফিক্সড ওভারল্যাপ সমস্যা)
+   ১. NAVBAR STYLING
    ========================================== */
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Duipashe shorabe na, pasapashi rakhbe */
     align-items: center;
     padding: 16px 64px;
     background-color: #090f24;
@@ -25,15 +28,14 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    flex-wrap: wrap; /* কন্টেন্ট বেশি হলে নিচে নামবে, ওভারল্যাপ করবে না */
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 40px; /* Logo, links ar buttons er majhkhane nirdisto gap rakhbe */
 }
-
 .logo-section {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-shrink: 0; /* লোগো সেকশন চ্যাপ্টা হবে না */
+    flex-shrink: 0;
 }
 
 .logo {
@@ -72,18 +74,20 @@ body {
     gap: 24px;
     align-items: center;
     flex-wrap: wrap;
+    margin-left: auto;  
+    margin-right: 20px;  
 }
-
 .nav-links a {
     text-decoration: none;
     color: #cbd5e1;
     font-size: 13px;
     font-weight: 500;
     transition: 0.2s ease;
-    white-space: nowrap; /* টেক্সট ভেঙে দুই লাইন হবে name */
+    white-space: nowrap;
 }
 
-.nav-links a.active, .nav-links a:hover {
+.nav-links a.active,
+.nav-links a:hover {
     color: #ffffff;
     border-bottom: 2px solid #2563eb;
     padding-bottom: 4px;
@@ -96,7 +100,9 @@ body {
     flex-shrink: 0;
 }
 
-/* ২. BUTTONS STYLING */
+/* ==========================================
+   ২. BUTTONS STYLING
+   ========================================== */
 .btn {
     padding: 8px 20px;
     border-radius: 6px;
@@ -109,9 +115,9 @@ body {
 }
 
 .btn-login-nav {
-    background-color: #2563eb;  
+    background-color: #2563eb;
     color: #ffffff;
-    border: none;              
+    border: none;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
@@ -134,12 +140,14 @@ body {
 
 .btn-outline-light:hover { background-color: #1e293b; }
 
-/* ৩. HERO BANNER STYLING */
+/* ==========================================
+   ৩. HERO BANNER STYLING
+   ========================================== */
 .hero-banner {
     padding: 120px 96px;
-    background: linear-gradient(rgba(9, 15, 36, 0.85), rgba(9, 15, 36, 0.95)), 
+    background: linear-gradient(rgba(9, 15, 36, 0.85), rgba(9, 15, 36, 0.95)),
                 url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1200') no-repeat center center/cover;
-    min-height: 520px; /* ফিক্সড হাইট সরিয়ে মিন-হাইট করা হয়েছে */
+    min-height: 520px;
     display: flex;
     align-items: center;
 }
@@ -172,7 +180,7 @@ body {
 }
 
 /* ==========================================
-   ৪. STATS SECTION (ফিক্সড আইকন ও সংখ্যা ওভারল্যাপ)
+   ৪. STATS SECTION
    ========================================== */
 .stats-container {
     margin: -48px 96px 0 96px;
@@ -202,19 +210,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; /* আইকন চ্যাপ্টা হবে না */
+    flex-shrink: 0;
     font-size: 18px;
 }
 
-.stat-icon.students { background-color: rgba(37, 99, 235, 0.1); color: #3b82f6; }
-.stat-icon.companies { background-color: rgba(22, 163, 74, 0.1); color: #22c55e; }
-.stat-icon.jobs { background-color: rgba(147, 51, 234, 0.1); color: #a855f7; }
-.stat-icon.rate { background-color: rgba(217, 119, 6, 0.1); color: #f59e0b; }
+.stat-icon.students  { background-color: rgba(37, 99, 235, 0.1);  color: #3b82f6; }
+.stat-icon.companies { background-color: rgba(22, 163, 74, 0.1);   color: #22c55e; }
+.stat-icon.jobs      { background-color: rgba(147, 51, 234, 0.1);  color: #a855f7; }
+.stat-icon.rate      { background-color: rgba(217, 119, 6, 0.1);   color: #f59e0b; }
 
 .stat-info {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* টেক্সট ট্রাঙ্কেশন বা রেসপন্সিভনেস এর জন্য */
+    min-width: 0;
 }
 
 .stat-info h2 {
@@ -230,7 +238,9 @@ body {
     white-space: nowrap;
 }
 
-/* ৫. SECTIONS GENERAL STYLING */
+/* ==========================================
+   ৫. SECTIONS GENERAL STYLING
+   ========================================== */
 .section-title {
     text-align: center;
     font-size: 24px;
@@ -258,7 +268,7 @@ body {
 }
 
 /* ==========================================
-   ৬. CARD & FEATURE STYLING (ফিক্সড চ্যাপ্টা কার্ড সমস্যা)
+   ৬. CARD & FEATURE STYLING
    ========================================== */
 .custom-card {
     background-color: #0f1938;
@@ -268,12 +278,12 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%; /* সব কার্ড একই সমান লম্বা থাকবে */
+    height: 100%;
 }
 
 .feature-card {
     display: flex;
-    flex-direction: column; /* আইকন উপরে এবং কন্টেন্ট নিচে নামানোর জন্য */
+    flex-direction: column;
     gap: 16px;
     align-items: flex-start;
 }
@@ -287,9 +297,10 @@ body {
     justify-content: center;
     flex-shrink: 0;
 }
-.feature-icon.blue { background-color: rgba(37, 99, 235, 0.1); color: #3b82f6; }
-.feature-icon.green { background-color: rgba(22, 163, 74, 0.1); color: #22c55e; }
-.feature-icon.purple { background-color: rgba(147, 51, 234, 0.1); color: #a855f7; }
+
+.feature-icon.blue   { background-color: rgba(37, 99, 235, 0.1);  color: #3b82f6; }
+.feature-icon.green  { background-color: rgba(22, 163, 74, 0.1);   color: #22c55e; }
+.feature-icon.purple { background-color: rgba(147, 51, 234, 0.1);  color: #a855f7; }
 
 .feature-card h3 {
     font-size: 18px;
@@ -319,7 +330,8 @@ body {
     font-weight: 600;
     white-space: nowrap;
 }
-.badge-blue { background-color: #1e293b; color: #3b82f6; }
+
+.badge-blue  { background-color: #1e293b; color: #3b82f6; }
 .badge-green { background-color: #064e3b; color: #10b981; }
 .badge-amber { background-color: #451a03; color: #f59e0b; }
 
@@ -357,7 +369,7 @@ body {
 .tags {
     display: flex;
     gap: 6px;
-    flex-wrap: wrap; /* ট্যাগ বেশি হলে নিচে নামবে */
+    flex-wrap: wrap;
 }
 
 .tags span {
@@ -378,7 +390,7 @@ body {
 .view-details:hover { text-decoration: underline; }
 
 /* ==========================================
-   ৭. MAIN FOOTER STYLING (ফিক্সড ওভারল্যাপ ও জগাখিচুড়ি)
+   ৭. MAIN FOOTER STYLING
    ========================================== */
 .main-footer {
     background-color: #080e21;
@@ -479,75 +491,556 @@ body {
 }
 
 /* ==========================================
-   ৮. নতুন মিডিয়া কোয়েরি (RESPONSIVE BREAKPOINTS)
+   ALUMNI PAGE STYLES
    ========================================== */
 
-/* ল্যাপটপ ভিউ এবং উইন্ডো মিডিয়াম ছোট করলে */
+/* Alumni Hero Header */
+.alumni-hero {
+    position: relative;
+    background-image: linear-gradient(rgba(9, 15, 36, 0.88), rgba(9, 15, 36, 0.95)),
+                      url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200');
+    background-size: cover;
+    background-position: center;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    padding: 40px 96px;
+}
+
+.alumni-hero-content {
+    max-width: 750px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+}
+
+.alumni-hero-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #3b82f6;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.alumni-hero-content h2 {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+}
+
+.alumni-hero-content p {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 640px;
+}
+
+/* Alumni Section Wrapper */
+.alumni-section {
+    padding: 48px 96px;
+}
+
+/* Flash Messages */
+.flash-container {
+    max-width: 896px;
+    margin: 16px auto 0 auto;
+    padding: 0 16px;
+}
+
+.flash-message {
+    background-color: rgba(37, 99, 235, 0.2);
+    border: 1px solid #3b82f6;
+    color: #bfdbfe;
+    font-size: 11px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* Search Bar */
+.alumni-search-bar {
+    background-color: #0f1938;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alumni-search-input-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 384px;
+}
+
+.alumni-search-input-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 11px;
+}
+
+.alumni-search-input {
+    width: 100%;
+    background-color: #090f24;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 8px 16px 8px 36px;
+    font-size: 11px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.alumni-search-input:focus { border-color: #3b82f6; }
+.alumni-search-input::placeholder { color: #64748b; }
+
+.alumni-search-label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Alumni Grid */
+.alumni-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Alumni Card */
+.alumni-card {
+    background-color: #0f1938;
+    border-radius: 12px;
+    border: 1px solid rgba(30, 41, 59, 0.8);
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: border-color 0.2s ease;
+}
+
+.alumni-card:hover { border-color: rgba(59, 130, 246, 0.5); }
+
+/* Alumni Card Top: Avatar + Info */
+.alumni-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.alumni-avatar-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.alumni-avatar-placeholder {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #60a5fa;
+    font-weight: 700;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.alumni-card-meta {
+    overflow: hidden;
+    width: 100%;
+}
+
+.alumni-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.alumni-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blood-badge {
+    background-color: rgba(127, 29, 29, 0.4);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.alumni-designation {
+    font-size: 11px;
+    color: #60a5fa;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.alumni-company {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Alumni Card Details */
+.alumni-card-details {
+    border-top: 1px solid rgba(30, 41, 59, 0.8);
+    border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+    padding: 12px 0;
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.alumni-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.alumni-detail-row i {
+    color: #3b82f6;
+    font-size: 10px;
+    flex-shrink: 0;
+    width: 12px;
+    text-align: center;
+}
+
+.alumni-detail-row span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alumni-detail-row strong { color: #e2e8f0; }
+
+/* Alumni Card Footer Buttons */
+.alumni-card-footer {
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-edit-profile {
+    width: 100%;
+    background-color: #d97706;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 11px;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+.btn-edit-profile:hover { background-color: #b45309; }
+
+.btn-whatsapp {
+    width: 100%;
+    background-color: #059669;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 11px;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+.btn-whatsapp:hover { background-color: #047857; }
+
+.btn-contact-alumni {
+    width: 100%;
+    background-color: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 11px;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+.btn-contact-alumni:hover { background-color: #1d4ed8; }
+
+/* Alumni Empty State */
+.alumni-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 0;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* ==========================================
+   EDIT PROFILE MODAL
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 16px;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+    background-color: #0f1938;
+    border: 1px solid #1e293b;
+    width: 100%;
+    max-width: 448px;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.modal-title i { color: #3b82f6; }
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.modal-form label {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.modal-form input,
+.modal-form select {
+    width: 100%;
+    background-color: #090f24;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.modal-form input:focus,
+.modal-form select:focus { border-color: #3b82f6; }
+
+.modal-form input[type="file"] {
+    color: #94a3b8;
+    padding: 6px 12px;
+}
+
+.modal-form select option { background-color: #090f24; }
+
+.modal-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 12px;
+}
+
+.btn-modal-cancel {
+    padding: 8px 16px;
+    background-color: #1e293b;
+    border: none;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.2s ease;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+.btn-modal-cancel:hover { background-color: #334155; }
+
+.btn-modal-save {
+    padding: 8px 16px;
+    background-color: #2563eb;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.2s ease;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+.btn-modal-save:hover { background-color: #1d4ed8; }
+
+/* ==========================================
+   RESPONSIVE BREAKPOINTS (MERGED)
+   ========================================== */
+
+/* Large screens — 1200px */
 @media screen and (max-width: 1200px) {
     .navbar { padding: 16px 32px; }
     .hero-banner { padding: 80px 48px; }
-    .stats-container, .home-grid, .main-footer {
+
+    .stats-container,
+    .home-grid,
+    .main-footer {
         margin-left: 32px;
         margin-right: 32px;
         padding-left: 0;
         padding-right: 0;
     }
+
     .footer-container { gap: 24px; }
+
+    /* Alumni */
+    .alumni-hero    { padding: 40px 32px; }
+    .alumni-section { padding: 48px 32px; }
+    .alumni-grid    { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ছোট ল্যাপটপ ও ট্যাবলেট ভিউ (৯৯২ পিক্সেল) */
+/* Tablet — 992px */
 @media screen and (max-width: 992px) {
     .navbar {
         justify-content: center;
         gap: 20px;
     }
+
     .stats-container {
-        margin-top: 30px; /* ব্যানার থেকে বের করে আনা হলো */
-        grid-template-columns: repeat(2, 1fr); /* ৪ কলাম থেকে ২ কলাম */
+        margin-top: 30px;
+        grid-template-columns: repeat(2, 1fr);
     }
-    .home-grid {
-        grid-template-columns: repeat(2, 1fr); /* ৩ কলাম থেকে ২ কলাম */
-    }
+
+    .home-grid { grid-template-columns: repeat(2, 1fr); }
+
     .footer-container {
-        grid-template-columns: repeat(2, 1fr); /* ৪ কলাম থেকে ২ কলাম */
+        grid-template-columns: repeat(2, 1fr);
         gap: 32px;
     }
+
+    /* Alumni */
+    .alumni-search-bar       { flex-direction: column; align-items: flex-start; }
+    .alumni-search-input-wrap { max-width: 100%; }
 }
 
-/* মোবাইল ভিউ (৭৬৮ পিক্সেল বা তার নিচে - উইন্ডো অনেক ছোট করলে) */
+/* Mobile — 768px */
 @media screen and (max-width: 768px) {
     .navbar {
-        flex-direction: column; /* সবকিছু নিচে নিচে নামবে */
+        flex-direction: column;
         padding: 16px;
         text-align: center;
     }
+
     .logo-section { flex-direction: column; text-align: center; }
+
     .nav-links {
         justify-content: center;
         width: 100%;
         margin: 15px 0;
         gap: 16px;
     }
+
     .hero-banner {
         padding: 60px 16px;
         text-align: center;
     }
-    .hero-content h1 { font-size: 32px; }
-    .hero-buttons { justify-content: center; }
-    
+
+    .hero-content h1  { font-size: 32px; }
+    .hero-buttons     { justify-content: center; }
+
     .stats-container {
-        grid-template-columns: 1fr; /* ১ কলাম লেআউট */
+        grid-template-columns: 1fr;
         margin: 30px 16px 0 16px;
     }
+
     .home-grid {
-        grid-template-columns: 1fr; /* ১ কলাম লেআউট - কার্ডগুলো চমৎকারভাবে নিচে নামবে */
+        grid-template-columns: 1fr;
         margin: 0 16px;
     }
+
     .footer-container {
-        grid-template-columns: 1fr; /* ফুটার ১ কলাম */
+        grid-template-columns: 1fr;
         gap: 32px;
         text-align: center;
     }
-    .footer-contact li { justify-content: center; }
-    .social-icons { justify-content: center; }
+
+    .footer-contact li  { justify-content: center; }
+    .social-icons       { justify-content: center; }
+
+    /* Alumni */
+    .alumni-hero { padding: 40px 16px; text-align: center; }
+    .alumni-hero-content p  { max-width: 100%; }
+    .alumni-section         { padding: 32px 16px; }
+    .alumni-grid            { grid-template-columns: 1fr; }
+    .alumni-search-bar      { align-items: stretch; }
+    .alumni-search-input-wrap { max-width: 100%; }
 }
